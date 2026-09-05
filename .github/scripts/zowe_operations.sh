@@ -12,8 +12,14 @@ else
   zowe zos-files create uss-directory "/z/$LOWERCASE_USERNAME/cobolcheck" $ZOWE_ARGS
 fi
 
-echo "Subiendo repositorio a USS..."
-zowe zos-files upload dir-to-uss "." "/z/$LOWERCASE_USERNAME/cobolcheck" --recursive $ZOWE_ARGS
+echo "Eliminando la carpeta .git del entorno local antes de la transferencia..."
+rm -rf .git
+
+echo "Subiendo directorio del proyecto a USS en modo binario para ejecutables..."
+zowe zos-files upload dir-to-uss "." "/z/$LOWERCASE_USERNAME/cobolcheck" \
+  --recursive \
+  --binary-files "*.jar,*.exe,*.class,*.o,*.so" \
+  $ZOWE_ARGS
 
 echo "Contenido del directorio subido:"
 zowe zos-files list uss-files "/z/$LOWERCASE_USERNAME/cobolcheck" $ZOWE_ARGS

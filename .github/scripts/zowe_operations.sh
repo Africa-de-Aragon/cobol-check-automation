@@ -1,14 +1,16 @@
 #!/bin/bash
 LOWERCASE_USERNAME=$(echo "$ZOWE_USERNAME" | tr '[:upper:]' '[:lower:]')
 
-# Se añade --secure-credentials false para evitar el error de Keytar/libsecret en GitHub Actions
+# Desactivar el uso del gestor de claves seguro para entornos de CI/CD
+zowe config set "defaults.secure-credentials-enabled" false
+
+# Crear o sobreescribir el perfil zosmf
 zowe profiles create zosmf-profile default-profile \
   --host "$ZOWE_HOST" \
   --port "${ZOWE_PORT:-10443}" \
   --user "$ZOWE_USERNAME" \
   --pass "$ZOWE_PASSWORD" \
   --reject-unauthorized false \
-  --secure-credentials false \
   --overwrite
 
 if ! zowe zos-files list uss-files "/z/$LOWERCASE_USERNAME/cobolcheck" &>/dev/null; then

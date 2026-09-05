@@ -1,27 +1,9 @@
 #!/bin/bash
-export PATH=$PATH:/usr/lpp/java/J8.0_64/bin
-export JAVA_HOME=/usr/lpp/java/J8.0_64
-export PATH=$PATH:/usr/lpp/zowe/cli/node/bin
+set -e
 
-cd cobolcheck
-chmod +x cobolcheck
-cd scripts
-chmod +x linux_gnucobol_run_tests
-cd ..
+LOWERCASE_USERNAME=$(echo "$ZOWE_USERNAME" | tr '[:upper:]' '[:lower:]')
+ZOWE_ARGS="--host $ZOWE_HOST --port ${ZOWE_PORT:-10443} --user $ZOWE_USERNAME --pass $ZOWE_PASSWORD --reject-unauthorized false"
 
-run_cobolcheck() {
-  program=$1
-  ./cobolcheck -p $program
-  
-  if [ -f "CC##99.CBL" ]; then
-    cp CC##99.CBL "//'${ZOWE_USERNAME}.CBL($program)'"
-  fi
-
-  if [ -f "${program}.JCL" ]; then
-    cp ${program}.JCL "//'${ZOWE_USERNAME}.JCL($program)'"
-  fi
-}
-
-for program in NUMBERS EMPPAY DEPTPAY; do
-  run_cobolcheck $program
-done
+echo "Ejecutando permisos y pruebas de COBOL Check remotamente en USS..."
+zowe zos-uss issue command "chmod +x /z/$LOWERCASE_USERNAME/cobolcheck/scripts/*" $ZOWE_ARGS
+zowe zos-uss issue command "cd /z/$LOWERCASE_USERNAME/cobolcheck && ./scripts/linux_gnucobol_run_tests" $ZOWE_ARGS

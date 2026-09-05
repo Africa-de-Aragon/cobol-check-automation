@@ -1,14 +1,19 @@
 #!/bin/bash
-set -e  # Detener el script inmediatamente si un comando falla
+set -e
 
 LOWERCASE_USERNAME=$(echo "$ZOWE_USERNAME" | tr '[:upper:]' '[:lower:]')
 ZOWE_ARGS="--host $ZOWE_HOST --port ${ZOWE_PORT:-10443} --user $ZOWE_USERNAME --pass $ZOWE_PASSWORD --reject-unauthorized false"
 
-echo "Verificando/Creando directorio en USS..."
-zowe zos-files create uss-directory "/z/$LOWERCASE_USERNAME/cobolcheck" $ZOWE_ARGS || true
+echo "Verificando directorio en USS..."
+if zowe zos-files list uss-files "/z/$LOWERCASE_USERNAME/cobolcheck" $ZOWE_ARGS > /dev/null 2>&1; then
+  echo "El directorio ya existe en USS, omitiendo creación."
+else
+  echo "El directorio no existe. Creando en USS..."
+  zowe zos-files create uss-directory "/z/$LOWERCASE_USERNAME/cobolcheck" $ZOWE_ARGS
+fi
 
-# Si tienes un archivo o carpeta específica para subir, verifica el nombre exacto.
-# Si vas a subir el contenido del repositorio actual:
+echo "Subiendo repositorio a USS..."
 zowe zos-files upload dir-to-uss "." "/z/$LOWERCASE_USERNAME/cobolcheck" --recursive $ZOWE_ARGS
 
+echo "Contenido del directorio subido:"
 zowe zos-files list uss-files "/z/$LOWERCASE_USERNAME/cobolcheck" $ZOWE_ARGS

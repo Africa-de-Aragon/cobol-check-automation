@@ -21,4 +21,4 @@ chmod -R +x .
 EOF
 
 echo "Enviando Job al Mainframe..."
-zowe zos-jobs submit local-file "run_cobolcheck.jcl" --wait-for-completion $ZOWE_ARGS
+zowe zos-jobs submit local-file "run_cobolcheck.jcl" --wait-for-active $ZOWE_ARGS

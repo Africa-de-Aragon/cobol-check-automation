@@ -14,7 +14,9 @@ cat <<EOF > run_cobolcheck.jcl
 //             CLASS=A,MSGCLASS=X,NOTIFY=&SYSUID
 //RUNTEST  EXEC PGM=BPXBATCH
 //STDPARM  DD *
-SH cd /z/$LOWERCASE_USERNAME/cobolcheck && ./cobolcheck -p EMPPAY && cp -v CC*.CBL "//'$ZOWE_USERNAME.COBOL(EMPPAY)'"
+SH cd /z/$LOWERCASE_USERNAME/cobolcheck &&
+./cobolcheck -p EMPPAY &&
+cp -v CC*.CBL "//'$ZOWE_USERNAME.COBOL(EMPPAY)'"
 /*
 //STDOUT   DD SYSOUT=*
 //STDERR   DD SYSOUT=*

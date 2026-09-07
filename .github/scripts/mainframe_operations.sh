@@ -8,7 +8,10 @@ ZOWE_ARGS="--host $ZOWE_HOST --port ${ZOWE_PORT:-10443} --user $ZOWE_USERNAME --
 echo "1. Subiendo EMPPAY.CBL al Mainframe..."
 zowe zos-files upload file-to-data-set "src/EMPPAY.CBL" "$ZOWE_USERNAME.COBOL(EMPPAY)" $ZOWE_ARGS || true
 
-echo "2 y 3. Ejecutando COBOL Check en USS para generar CC##99.CBL..."
+echo "2. Subiendo EMPPAY.JCL actualizado con // ENDIF..."
+zowe zos-files upload file-to-data-set "EMPPAY.JCL" "$ZOWE_USERNAME.JCL(EMPPAY)" $ZOWE_ARGS || true
+
+echo "3. Ejecutando COBOL Check en USS para generar CC##99.CBL..."
 cat <<EOF > run_cobolcheck.jcl
 //${TRUNC_USER}C JOB (ACCT),'COBOLCHECK',
 //             CLASS=A,MSGCLASS=X,NOTIFY=&SYSUID
@@ -24,5 +27,5 @@ EOF
 
 zowe zos-jobs submit local-file "run_cobolcheck.jcl" --wait-for-active $ZOWE_ARGS
 
-echo "4 y 5. Submitiendo EMPPAY.JCL para compilar y ejecutar los tests..."
+echo "4. Submitiendo EMPPAY.JCL para compilar y ejecutar los tests..."
 zowe zos-jobs submit local-file "EMPPAY.JCL" --wait-for-active $ZOWE_ARGS

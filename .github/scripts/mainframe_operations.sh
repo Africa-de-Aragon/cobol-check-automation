@@ -12,7 +12,7 @@ cat <<EOF > run_cobolcheck.jcl
 //             CLASS=A,MSGCLASS=X,NOTIFY=&SYSUID
 //RUNTEST  EXEC PGM=BPXBATCH
 //STDPARM  DD *
-SH cd /z/$LOWERCASE_USERNAME/cobolcheck && chmod -R +x . && ./cobolcheck
+SH cd /z/$LOWERCASE_USERNAME/cobolcheck && pwd && ls -la && chmod -R 755 .
 /*
 //STDOUT   DD SYSOUT=*
 //STDERR   DD SYSOUT=*
